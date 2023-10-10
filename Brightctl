@@ -1,0 +1,23 @@
+#!/bin/bash
+
+# Discover monitor name with: xrandr | grep " connected"
+STEP=2500          # Step Up/Down brightnes by: 5 = ".05", 10 = ".10", etc.
+
+CurrBright=$(cat /sys/class/backlight/intel_backlight/brightness)
+#CurrBright="${CurrBright##* }"  # Get brightness level with decimal place
+
+Left=${CurrBright%%"."*}        # Extract left of decimal point
+Right=${CurrBright#*"."}        # Extract right of decimal point
+
+#MathBright="0"
+#[[ "$Left" != 0 && "$STEP" -lt 10 ]] && STEP=10     # > 1.0, only .1 works
+#[[ "$Left" != 0 ]] && MathBright="$Left"00          # 1.0 becomes "100"
+#[[ "${#Right}" -eq 1 ]] && Right="$Right"0          # 0.5 becomes "50"
+#MathBright=$(( MathBright + Right ))
+
+[[ "$1" == "Up" || "$1" == "+" ]] && CurrBright=$(( CurrBright + STEP ))
+[[ "$1" == "Down" || "$1" == "-" ]] && CurrBright=$(( CurrBright - STEP ))
+[[ "${CurrBright:0:1}" == "-" || "${CurrBright}" == "0" ]] && CurrBright=1    # Negative not allowed
+[[ "$CurrBright" -gt 500000  ]] && CurrBright=500000      # Can't go over 9.99
+
+echo "$CurrBright" > /sys/class/backlight/intel_backlight/brightness
