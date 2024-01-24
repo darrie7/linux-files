@@ -30,7 +30,7 @@ async def funcsion(torrent):
         if any(torrent.lower().endswith(ext) for ext in VIDEO_EXTENSIONS):
             await download_subs(torrent)
         return
-    await gather(*[download_subs(file) for file in glob(f'{torrent}/**/*', recursive=True) if (os.path.isfile(file) and any(file.lower().endswith(ext) for ext in VIDEO_EXTENSIONS))])
+    await gather(*[download_subs(file) for file in glob(fr'{torrent}/**/*', recursive=True) if (os.path.isfile(file) and any(file.lower().endswith(ext) for ext in VIDEO_EXTENSIONS))])
     return
 
 if __name__ == "__main__":
